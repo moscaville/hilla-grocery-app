@@ -1,0 +1,41 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI Docker image with Maven
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: dev
+    - name: docker login for github
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.CR_PAT_USERNAME }}}
+        password: ${{ secrets.CR_PAT }}    
+    - name: Configure git
+      run: |
+        git config --global committer.email "noreply@github.com"
+        git config --global committer.name "GitHub"
+        git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git config --global author.name "${GITHUB_ACTOR}"
+    - name: Checkout dev branch
+      run: git checkout dev
+    - name: Set env to production
+      if: endsWith(github.ref, '/main')
+      run: |
+       echo "QUARKUS_CONTAINER_IMAGE_REGISTRY=registry.digitalocean.com" >> $GITHUB_ENV  
+    - name: build
+      run: |
+        doctl registry login
+        mvn package spring-boot:build-image
