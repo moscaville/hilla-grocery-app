@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: dev
+        ref: main
     - name: docker login for github
       uses: docker/login-action@v1
       with:
@@ -29,8 +29,8 @@ jobs:
         git config --global committer.name "GitHub"
         git config --global author.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global author.name "${GITHUB_ACTOR}"
-    - name: Checkout dev branch
-      run: git checkout dev
+    - name: Checkout main branch
+      run: git checkout main
     - name: Set env to production
       if: endsWith(github.ref, '/main')
       run: |
