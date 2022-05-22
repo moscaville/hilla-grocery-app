@@ -31,10 +31,9 @@ jobs:
         git config --global author.name "${GITHUB_ACTOR}"
     - name: Checkout main branch
       run: git checkout main
-    - name: Set env to production
-      if: endsWith(github.ref, '/main')
-      run: |
-       echo "QUARKUS_CONTAINER_IMAGE_REGISTRY=registry.digitalocean.com" >> $GITHUB_ENV  
     - name: build
+      env:
+        CR_PAT_USERNAME: ${{ secrets.CR_PAT_USERNAME }}
+        CR_PAT: ${{ secrets.CR_PAT }}
       run: |
         mvn package spring-boot:build-image
