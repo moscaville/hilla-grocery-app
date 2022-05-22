@@ -37,5 +37,4 @@ jobs:
        echo "QUARKUS_CONTAINER_IMAGE_REGISTRY=registry.digitalocean.com" >> $GITHUB_ENV  
     - name: build
       run: |
-        doctl registry login
         mvn package spring-boot:build-image
